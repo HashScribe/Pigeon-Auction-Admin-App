@@ -1,15 +1,11 @@
-import * as React from 'react';
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
+import { ITitle } from "./title.interface";
 
-interface TitleProps {
-  children?: React.ReactNode;
-}
-
-const Title = (props: TitleProps) => {
+const Title = ({ children }: ITitle) => {
   return (
     <Typography component="h2" variant="h6" color="primary" gutterBottom>
-      {props.children}
+      {children}
     </Typography>
   );
-}
-export {Title}
+};
+export { Title };
