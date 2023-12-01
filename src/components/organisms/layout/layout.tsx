@@ -13,10 +13,11 @@ import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { ThemeProvider, styled } from "@mui/material/styles";
 import * as React from "react";
-import { ListItems } from "../../molecules";
 import { Outlet } from "react-router-dom";
+import { theme } from "../../../theme/colors";
+import { ListItems } from "../../molecules";
 
 function Copyright(props: any) {
   return (
@@ -86,9 +87,6 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
-
 const Layout = () => {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
@@ -96,7 +94,7 @@ const Layout = () => {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
