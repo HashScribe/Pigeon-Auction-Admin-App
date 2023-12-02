@@ -16,8 +16,8 @@ import Typography from "@mui/material/Typography";
 import { ThemeProvider, styled } from "@mui/material/styles";
 import * as React from "react";
 import { Outlet } from "react-router-dom";
-import { theme } from "../../../theme/colors";
 import { ListItems } from "../../molecules";
+import { theme } from "../../../theme/index";
 
 function Copyright(props: any) {
   return (
