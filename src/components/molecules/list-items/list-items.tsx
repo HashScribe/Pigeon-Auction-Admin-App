@@ -38,19 +38,30 @@ export const ListItems = ({ isMainNavOpen }: IListItems) => {
       </ListItemButton>
       {isMainNavOpen && (
         <Collapse in={isAuctionListOpen} timeout="auto" unmountOnExit>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton sx={{ pl: 4 }} component={Link} to="/live-auctions">
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>
             <ListItemText primary="Live Auctions" />
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
+
+          <ListItemButton sx={{ pl: 4 }} component={Link} to="/active-auctions">
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Active Auctions" />
+          </ListItemButton>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            component={Link}
+            to="/pending-auctions"
+          >
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>
             <ListItemText primary="Pending Auctions" />
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton sx={{ pl: 4 }} component={Link} to="/past-auctions">
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>
@@ -67,13 +78,13 @@ export const ListItems = ({ isMainNavOpen }: IListItems) => {
       </ListItemButton>
       {isMainNavOpen && (
         <Collapse in={isUserListOpen} timeout="auto" unmountOnExit>
-          <ListItemButton sx={{ pl: 4 }} component={Link} to="users">
+          <ListItemButton sx={{ pl: 4 }}>
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>
             <ListItemText primary="Active Users" />
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton sx={{ pl: 4 }} component={Link} to="/users">
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>

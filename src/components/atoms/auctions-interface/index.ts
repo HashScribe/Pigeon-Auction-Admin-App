@@ -1,0 +1,1 @@
+export {IAuctionsPosts} from './auctions-posts.interface';
