@@ -6,7 +6,7 @@ const theme = createTheme({
         main: colors.blue[900],
       },
       secondary: {
-        main: colors.blue[300],
+        main: colors.grey[400],
       },
     },
   });

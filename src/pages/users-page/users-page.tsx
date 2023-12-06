@@ -1,4 +1,6 @@
+import UsersTable from "../../components/molecules/users-table/users-table";
+
 const UsersPage = () => {
-  return <h1>All Users</h1>;
+  return <UsersTable />;
 };
 export { UsersPage };

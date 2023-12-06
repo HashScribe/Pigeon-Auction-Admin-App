@@ -9,7 +9,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import MuiDrawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -18,24 +17,6 @@ import * as React from "react";
 import { Outlet } from "react-router-dom";
 import { ListItems } from "../../molecules";
 import { theme } from "../../../theme/index";
-
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const drawerWidth: number = 240;
 
@@ -145,11 +126,7 @@ const Layout = () => {
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            {<ListItems isMainNavOpen={open} />}
-            {/* <Divider sx={{ my: 1 }} />
-            {secondaryListItems} */}
-          </List>
+          <List component="nav">{<ListItems isMainNavOpen={open} />}</List>
         </Drawer>
         <Box
           component="main"
@@ -167,7 +144,6 @@ const Layout = () => {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} id="detail">
             <Outlet />
-            <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
       </Box>

@@ -1,0 +1,1 @@
+export {IAuctionBids} from './auctions--bids.interface';
