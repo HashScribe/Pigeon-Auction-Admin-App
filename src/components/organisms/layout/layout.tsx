@@ -165,7 +165,7 @@ const Layout = () => {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} id="detail">
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }} id="detail">
             <Outlet />
             <Copyright sx={{ pt: 4 }} />
           </Container>

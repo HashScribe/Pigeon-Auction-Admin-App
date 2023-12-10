@@ -38,7 +38,7 @@ export const ListItems = ({ isMainNavOpen }: IListItems) => {
       </ListItemButton>
       {isMainNavOpen && (
         <Collapse in={isAuctionListOpen} timeout="auto" unmountOnExit>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton sx={{ pl: 4 }} component={Link} to="live-auction">
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>
