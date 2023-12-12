@@ -1,2 +1,2 @@
 export { ListItems } from "./list-items/list-items";
-export { PrimaryCard } from "./primary-card/primary-card";
+export { BirdCard } from "./primary-card/bird-card";
