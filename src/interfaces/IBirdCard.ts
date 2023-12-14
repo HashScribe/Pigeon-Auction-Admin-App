@@ -4,7 +4,6 @@ interface IBirdCard {
   postedBy: string;
   loftName: string;
   startingPrice: string;
-  loading: boolean;
 }
 
 export { IBirdCard };

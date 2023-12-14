@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -6,6 +7,8 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { IBirdCard } from "../../../interfaces";
+import CircularProgress from "@mui/material/CircularProgress";
+import { StyledImageContainer, StyledLoadingOverlay } from "./bird-card.style";
 
 const BirdCard = ({
   image,
@@ -14,14 +17,25 @@ const BirdCard = ({
   loftName,
   startingPrice,
 }: IBirdCard) => {
+  const [loading, setLoading] = useState(true);
+
   return (
     <Card sx={{ maxWidth: 265, minWidth: 265 }}>
-      <CardMedia
-        component="img"
-        height="200"
-        alt="Nicola Sturgeon on a TED talk stage"
-        image={image}
-      />
+      <StyledImageContainer>
+        {loading && (
+          <StyledLoadingOverlay>
+            <CircularProgress />
+          </StyledLoadingOverlay>
+        )}
+
+        <CardMedia
+          component="img"
+          height="200"
+          alt="Nicola Sturgeon on a TED talk stage"
+          image={image}
+          onLoad={() => setLoading(false)}
+        />
+      </StyledImageContainer>
 
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">

@@ -28,7 +28,6 @@ const LiveAuctionView = ({ auctionPost, dataLoading }: ILiveAuctionView) => {
                   postedBy={auction.userName}
                   loftName={auction.loftName}
                   startingPrice={auction.startingBid}
-                  loading={dataLoading}
                 />
               ))}
             </>
