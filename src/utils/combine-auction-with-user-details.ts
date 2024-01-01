@@ -8,7 +8,7 @@ const combineAuctionWithUserDetails = (
 
     const auctionWithUser = {
       ...auction,
-      userName: user?.fancierName ?? "unknown",
+      userName: user?.username ?? "unknown",
       loftName: user?.loftName ?? "unknown",
     };
     return auctionWithUser;

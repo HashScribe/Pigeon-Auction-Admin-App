@@ -1,0 +1,9 @@
+.swiper {
+  width: 400px;
+  border-radius: 50px;
+}
+
+.swiper-slide img {
+  display: block;
+  object-fit: cover;
+}
