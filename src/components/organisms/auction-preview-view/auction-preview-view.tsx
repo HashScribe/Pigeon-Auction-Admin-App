@@ -13,52 +13,47 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { doc, updateDoc } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { firestoreDB } from "../../../config";
 import { AUCTION_STATUS } from "../../../enums";
 import { IUserAndAuction } from "../../../interfaces";
-import { useSnackbar } from "../snackbar-provider";
+import { updateAuctionStatus } from "../../../services/update-auction-status.service";
 import { ConfirmationModal } from "../../molecules";
+import { useSnackbar } from "../snackbar-provider";
 import "./style.css";
 
 interface Props {
-  auction: IUserAndAuction;
+  auctionData: IUserAndAuction;
 }
 
-export const AuctionPreviewView: React.FC<Props> = ({ auction }) => {
+export const AuctionPreviewView: React.FC<Props> = ({ auctionData }) => {
   const navigate = useNavigate();
 
   const snackbar = useSnackbar();
 
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
-  const itemData = [
+  const images = [
     {
-      img: auction.mainImage,
+      img: auctionData.mainImage,
       title: "Main Image",
     },
     {
-      img: auction.leftWingImage,
+      img: auctionData.leftWingImage,
       title: "Left Wing Image",
     },
     {
-      img: auction.rightWingImage,
+      img: auctionData.rightWingImage,
       title: "Right Wing Image",
     },
     {
-      img: auction.tailImage,
+      img: auctionData.tailImage,
       title: "Tail Image",
-    },
-    {
-      img: auction.leftWingImage,
-      title: "Left Wing Image",
     },
   ];
 
@@ -66,15 +61,45 @@ export const AuctionPreviewView: React.FC<Props> = ({ auction }) => {
   const [declineMessageText, setDeclineMessageText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const updateAuctionStatus = async (
-    postId: string,
-    status: AUCTION_STATUS
-  ) => {
+  const auctionDescription = useMemo(() => {
+    if (!auctionData?.description) {
+      return;
+    }
+
+    const description =
+      !isDescriptionVisibe && auctionData.description.length > 100
+        ? auctionData.description.slice(0, 100)
+        : auctionData.description;
+
+    return description;
+  }, [auctionData.description, isDescriptionVisibe]);
+
+  const auction = {
+    username: auctionData?.userName,
+    loftname: auctionData?.loftName,
+    startingBid: auctionData?.startingBid,
+    birdName: auctionData?.birdName,
+    gender: auctionData?.gender,
+    description: auctionDescription || "",
+  };
+
+  type IKeyLabels = keyof typeof auction;
+
+  const keyLabels: Record<IKeyLabels, string> = {
+    username: "User Name",
+    loftname: "Loft Name",
+    startingBid: "Starting Bid",
+    birdName: "Bird Name",
+    gender: "Gender",
+    description: "Description",
+  };
+
+  const updateStatus = async (postId: string, status: AUCTION_STATUS) => {
     const isApproved = status === AUCTION_STATUS.APPROVED;
 
-    if (!isApproved && declineMessageText.length < 26) {
+    if (!isApproved && declineMessageText.length < 15) {
       snackbar?.openSnackbar(
-        "Decline message should be more than 25 characters",
+        "Decline message should be more than 14 characters",
         "error"
       );
       return;
@@ -83,49 +108,30 @@ export const AuctionPreviewView: React.FC<Props> = ({ auction }) => {
       setIsConfirmationModalOpen(false);
     }
     setIsLoading(true);
-    const postRef = doc(firestoreDB, "Posts_Test", postId);
+
     try {
-      await updateDoc(postRef, {
-        status: status,
-        ...(status === AUCTION_STATUS.REJECTED && {
-          rejectedReason: declineMessageText,
-        }),
-      });
+      const { status: auctionStatus } = await updateAuctionStatus(
+        postId,
+        status,
+        declineMessageText
+      );
+
+      if (auctionStatus === 500) {
+        throw new Error();
+      }
 
       const message = isApproved
         ? "Auction Approved Successfully"
         : "Auction Rejected Successfully";
 
       snackbar?.openSnackbar(message, "success");
+      navigate("/approved-auctions");
     } catch (err) {
       snackbar?.openSnackbar("Something went wrong", "error");
     } finally {
       setIsLoading(false);
     }
-
-    navigate("/live-auction");
   };
-
-  const auctionDescription = useMemo(() => {
-    if (!auction?.description) {
-      return;
-    }
-
-    const description =
-      !isDescriptionVisibe && auction.description.length > 100
-        ? auction.description.slice(0, 100)
-        : auction.description;
-
-    return description;
-  }, [auction.description, isDescriptionVisibe]);
-
-  const testDescription =
-    "skjdfnskjdfbjkdsbfgkjdsnfjdnfjnsdkjfnsdkjfnskdnfjklansfdnjkdsnf kjdsnd vd vzkdnjkzsdnfkjsdnfesnfenjnfdsnmc cxnmv cxnmv xcnv xck vkjd kdnfjdiowejoiwjeoiwejioewjfiojewdfoijdoifjwoiejfiojfoiwjefoiwejfoiejfoiwenfoinwefnwienfoiwenfoiwenfoiwenfiowenfionweifonweoinvvowfnoejf";
-
-  const desc =
-    !isDescriptionVisibe && testDescription.length > 100
-      ? testDescription.slice(0, 100)
-      : testDescription;
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -140,7 +146,7 @@ export const AuctionPreviewView: React.FC<Props> = ({ auction }) => {
               modules={[Pagination, Navigation]}
               className="mySwiper"
             >
-              {itemData.map((item) => (
+              {images.map((item) => (
                 <SwiperSlide key={item.img}>
                   <img
                     srcSet={item.img}
@@ -173,106 +179,82 @@ export const AuctionPreviewView: React.FC<Props> = ({ auction }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell align="left" component="th" scope="row">
-                      Posted By:
-                    </TableCell>
-                    <TableCell align="left">{auction?.userName}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="left" component="th" scope="row">
-                      Loft:
-                    </TableCell>
-                    <TableCell align="left">{auction?.loftName}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="left" component="th" scope="row">
-                      Starting Price:
-                    </TableCell>
-                    <TableCell align="left">{auction?.startingBid}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="left" component="th" scope="row">
-                      Bird Name:
-                    </TableCell>
-                    <TableCell align="left">{auction?.birdName}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="left" component="th" scope="row">
-                      Gender:
-                    </TableCell>
-                    <TableCell align="left">{auction?.gender}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="left" component="th" scope="row">
-                      Bird Description:
-                    </TableCell>
-                    <TableCell
-                      align="left"
-                      sx={{
-                        maxWidth: 120,
-                        overflowWrap: "break-word",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {desc}
-                      {(testDescription || "").length > 100 ? (
-                        <Button
-                          onClick={() =>
-                            setisDescriptionVisibe(!isDescriptionVisibe)
-                          }
+                  {Object.entries(auction).map(([key, value]) => {
+                    const isDescription = key === "description";
+                    const typedKey = key as IKeyLabels;
+
+                    return (
+                      <TableRow>
+                        <TableCell align="center">
+                          {keyLabels[typedKey]}:
+                        </TableCell>
+                        <TableCell
+                          align="center"
                           sx={{
-                            fontSize: "12px",
-                            paddingLeft: !isDescriptionVisibe ? 0 : "8px",
+                            ...(isDescription && {
+                              maxWidth: 120,
+                              overflowWrap: "break-word",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "normal",
+                            }),
                           }}
                         >
-                          {!isDescriptionVisibe ? "See more..." : "Show less"}
-                        </Button>
-                      ) : null}
-                    </TableCell>
-                  </TableRow>
+                          {value}
+                          {key === "description" && value.length > 100 ? (
+                            <Button
+                              onClick={() =>
+                                setisDescriptionVisibe(!isDescriptionVisibe)
+                              }
+                              className={`see-${
+                                !isDescriptionVisibe ? "more" : "less"
+                              }-button`}
+                            >
+                              {!isDescriptionVisibe
+                                ? "See more..."
+                                : "Show less"}
+                            </Button>
+                          ) : null}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>
-
-            <Grid
-              direction="row"
-              sx={{ display: "flex" }}
-              justifyContent={"center"}
-              gap={3}
-              mt={4}
-            >
-              {auction?.status !== AUCTION_STATUS.APPROVED ? (
+            {auctionData?.status === AUCTION_STATUS.PENDING ? (
+              <Grid
+                direction="row"
+                sx={{ display: "flex" }}
+                justifyContent={"center"}
+                gap={3}
+                mt={4}
+              >
                 <Grid xs={5} textAlign="center">
                   <Button
                     variant="contained"
                     size="small"
                     fullWidth
                     onClick={() =>
-                      updateAuctionStatus(auction.id, AUCTION_STATUS.APPROVED)
+                      updateStatus(auctionData.id, AUCTION_STATUS.APPROVED)
                     }
                     disabled={isLoading}
                   >
                     Approve
                   </Button>
                 </Grid>
-              ) : null}
 
-              <Grid xs={5} textAlign="center">
-                <Button
-                  size="small"
-                  variant="outlined"
-                  fullWidth
-                  onClick={() =>
-                    // updateAuctionStatus(auction.id, AUCTION_STATUS.REJECTED)
-                    setIsConfirmationModalOpen(true)
-                  }
-                >
-                  Decline
-                </Button>
+                <Grid xs={5} textAlign="center">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => setIsConfirmationModalOpen(true)}
+                  >
+                    Decline
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
+            ) : null}
           </Box>
         </Grid>
       </Grid>
@@ -287,14 +269,11 @@ export const AuctionPreviewView: React.FC<Props> = ({ auction }) => {
             fullWidth
             variant="standard"
             onChange={(e) => setDeclineMessageText(e.target.value)}
-            required
           />
         }
         title="Decline Auction"
         bodyText="Please provide a reason for rejecting the auction request."
-        onSubmit={() =>
-          updateAuctionStatus(auction.id, AUCTION_STATUS.REJECTED)
-        }
+        onSubmit={() => updateStatus(auctionData.id, AUCTION_STATUS.REJECTED)}
       />
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

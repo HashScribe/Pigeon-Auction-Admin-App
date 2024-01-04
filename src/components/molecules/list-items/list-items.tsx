@@ -27,6 +27,29 @@ export const ListItems = ({ isMainNavOpen }: IListItems) => {
     setIsUserListOpen(!isUserListOpen);
   };
 
+  const listItems = [
+    {
+      name: "Live",
+      to: "live-auctions",
+    },
+    {
+      name: "Pending",
+      to: "pending-auctions",
+    },
+    {
+      name: "Approved",
+      to: "approved-auctions",
+    },
+    {
+      name: "Rejected",
+      to: "rejected-auctions",
+    },
+    {
+      name: "Completed",
+      to: "completed-auctions",
+    },
+  ];
+
   return (
     <React.Fragment>
       <ListItemButton onClick={handleOnClickAuctionList}>
@@ -38,24 +61,14 @@ export const ListItems = ({ isMainNavOpen }: IListItems) => {
       </ListItemButton>
       {isMainNavOpen && (
         <Collapse in={isAuctionListOpen} timeout="auto" unmountOnExit>
-          <ListItemButton sx={{ pl: 4 }} component={Link} to="live-auction">
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Live Auctions" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Pending Auctions" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Past Auctions" />
-          </ListItemButton>
+          {listItems.map(({ name, to }) => (
+            <ListItemButton sx={{ pl: 4 }} component={Link} to={to}>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText primary={name} />
+            </ListItemButton>
+          ))}
         </Collapse>
       )}
       <ListItemButton onClick={handleOnClickUserList}>

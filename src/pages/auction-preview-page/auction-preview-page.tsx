@@ -7,9 +7,5 @@ export const AuctionPreviewPage = () => {
 
   const auction: IUserAndAuction = location.state.auction;
 
-  return (
-    <div>
-      <AuctionPreviewView auction={auction} />
-    </div>
-  );
+  return <AuctionPreviewView auctionData={auction} />;
 };

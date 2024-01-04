@@ -10,8 +10,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IBirdCard } from "../../../interfaces";
 import { StyledImageContainer, StyledLoadingOverlay } from "./bird-card.style";
+import { AUCTION_STATUS } from "../../../enums";
 
-const BirdCard = ({ auction }: IBirdCard) => {
+const BirdCard = ({ auction, openModal, updateStatus }: IBirdCard) => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -95,24 +96,36 @@ const BirdCard = ({ auction }: IBirdCard) => {
             Preview
           </Button>
         </Grid>
-        <Grid
-          direction="row"
-          sx={{ display: "flex" }}
-          justifyContent={"center"}
-          gap={3}
-          width={"100%"}
-        >
-          <Grid xs={5} textAlign="center">
-            <Button variant="contained" size="small" fullWidth>
-              Approve
-            </Button>
+        {auction.status === AUCTION_STATUS.PENDING ? (
+          <Grid
+            direction="row"
+            sx={{ display: "flex" }}
+            justifyContent={"center"}
+            gap={3}
+            width={"100%"}
+          >
+            <Grid xs={5} textAlign="center">
+              <Button
+                variant="contained"
+                size="small"
+                fullWidth
+                onClick={updateStatus}
+              >
+                Approve
+              </Button>
+            </Grid>
+            <Grid xs={5} textAlign="center">
+              <Button
+                size="small"
+                variant="outlined"
+                fullWidth
+                onClick={openModal}
+              >
+                Decline
+              </Button>
+            </Grid>
           </Grid>
-          <Grid xs={5} textAlign="center">
-            <Button size="small" variant="outlined" fullWidth>
-              Decline
-            </Button>
-          </Grid>
-        </Grid>
+        ) : null}
       </CardActions>
     </Card>
   );
