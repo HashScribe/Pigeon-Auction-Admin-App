@@ -1,7 +1,7 @@
 import { IUserAndAuction } from "../../../interfaces";
-interface ILiveAuctionView {
+interface IAuctionList {
   auctionPost: IUserAndAuction[];
   dataLoading: boolean;
   title: string;
 }
-export { ILiveAuctionView };
+export { IAuctionList };

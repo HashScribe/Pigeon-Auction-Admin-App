@@ -28,6 +28,7 @@ const router = createBrowserRouter(
         <Route path="/approved-auctions" element={<ApprovedAuctionsPage />} />
         <Route path="/completed-auctions" element={<CompletedAuctionsPage />} />
         <Route path="/auction-preview" element={<AuctionPreviewPage />} />
+        <Route path="/users" element={<UsersPage />} />
       </Route>
     </Route>
   )

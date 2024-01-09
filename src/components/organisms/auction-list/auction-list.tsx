@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { CardSkeleton, PageTitle } from "../../atoms";
 import { BirdCard, ConfirmationModal } from "../../molecules";
-import { ILiveAuctionView } from "./auction-list.interface";
+import { IAuctionList } from "./auction-list.interface";
 import { useState } from "react";
 import { Backdrop, CircularProgress, TextField } from "@mui/material";
 import { IUserAndAuction } from "../../../interfaces";
@@ -10,7 +10,7 @@ import { useSnackbar } from "../snackbar-provider";
 import { AUCTION_STATUS } from "../../../enums";
 import { updateAuctionStatus } from "../../../services/update-auction-status.service";
 import { useNavigate } from "react-router";
-const AuctionList = ({ auctionPost, dataLoading, title }: ILiveAuctionView) => {
+const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
   const skeletons = Array.from({ length: 10 });
 
   const snackbar = useSnackbar();

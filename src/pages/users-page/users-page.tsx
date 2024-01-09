@@ -1,4 +1,9 @@
+import { UsersList } from "../../components/organisms";
+import { useUserService } from "../../services/users.service";
+
 const UsersPage = () => {
-  return <h1>All Users</h1>;
+  const { users, loading } = useUserService();
+
+  return <UsersList users={users} dataLoading={loading} />;
 };
 export { UsersPage };
