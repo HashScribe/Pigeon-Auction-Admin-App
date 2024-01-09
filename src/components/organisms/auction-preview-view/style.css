@@ -1,0 +1,18 @@
+.swiper {
+  width: 400px;
+  border-radius: 50px;
+}
+
+.swiper-slide img {
+  display: block;
+  object-fit: cover;
+}
+
+.see-more-button {
+  font-size: "12px";
+}
+
+.see-less-button {
+  font-size: "12px";
+  padding-left: "8px";
+}

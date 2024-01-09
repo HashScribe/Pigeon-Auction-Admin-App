@@ -1,2 +1,4 @@
 export { Layout } from "./layout/layout";
-export { LiveAuctionView } from "./auction-view";
+export { AuctionList } from "./auction-list";
+export { AuctionPreviewView } from "./auction-preview-view/auction-preview-view";
+export { UsersList } from "./users-list/users-list";

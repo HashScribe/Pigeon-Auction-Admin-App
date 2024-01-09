@@ -146,9 +146,7 @@ const Layout = () => {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {<ListItems isMainNavOpen={open} />}
-            {/* <Divider sx={{ my: 1 }} />
-            {secondaryListItems} */}
+            <ListItems isMainNavOpen={open} />
           </List>
         </Drawer>
         <Box

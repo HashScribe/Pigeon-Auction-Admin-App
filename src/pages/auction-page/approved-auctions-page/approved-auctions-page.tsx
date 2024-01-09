@@ -2,20 +2,20 @@ import { AuctionList } from "../../../components/organisms";
 import { AUCTION_STATUS } from "../../../enums";
 import { useAuctionService } from "../../../services";
 
-const LiveAuctionPage = () => {
+const ApprovedAuctionsPage = () => {
   const { auctions, loading } = useAuctionService();
 
-  const liveAuctions = auctions?.filter(
-    (auction) => auction.status === AUCTION_STATUS.LIVE
+  const approvedAuctions = auctions?.filter(
+    (auction) => auction.status === AUCTION_STATUS.APPROVED
   );
 
   return (
     <AuctionList
-      auctionPost={liveAuctions}
+      auctionPost={approvedAuctions}
       dataLoading={loading}
-      title="Live Auctions"
+      title="Approved Auctions"
     />
   );
 };
 
-export { LiveAuctionPage };
+export { ApprovedAuctionsPage };
