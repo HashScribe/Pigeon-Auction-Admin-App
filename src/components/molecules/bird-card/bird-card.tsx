@@ -1,23 +1,21 @@
-import { useState } from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { IBirdCard } from "../../../interfaces";
-import CircularProgress from "@mui/material/CircularProgress";
 import { StyledImageContainer, StyledLoadingOverlay } from "./bird-card.style";
+import { AUCTION_STATUS } from "../../../enums";
 
-const BirdCard = ({
-  image,
-  title,
-  postedBy,
-  loftName,
-  startingPrice,
-}: IBirdCard) => {
+const BirdCard = ({ auction, openModal, updateStatus }: IBirdCard) => {
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   return (
     <Card sx={{ maxWidth: 265, minWidth: 265 }}>
@@ -32,14 +30,14 @@ const BirdCard = ({
           component="img"
           height="200"
           alt="Nicola Sturgeon on a TED talk stage"
-          image={image}
+          image={auction.mainImage}
           onLoad={() => setLoading(false)}
         />
       </StyledImageContainer>
 
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
-          {title}
+          {auction.birdName}
         </Typography>
         <Grid>
           <Grid container flexDirection={"row"} gap={1}>
@@ -52,7 +50,7 @@ const BirdCard = ({
             </Typography>
 
             <Typography variant="body2" color={"text.secondary"}>
-              {postedBy}
+              {auction.userName}
             </Typography>
           </Grid>
           <Grid container flexDirection={"row"} gap={1}>
@@ -64,7 +62,7 @@ const BirdCard = ({
               Loft Name:{" "}
             </Typography>
             <Typography variant="body2" color={"text.secondary"}>
-              {loftName}
+              {auction.loftName}
             </Typography>
           </Grid>
           <Grid container flexDirection={"row"} gap={1}>
@@ -76,7 +74,7 @@ const BirdCard = ({
               Starting Price:{" "}
             </Typography>
             <Typography variant="body2" color={"text.secondary"}>
-              LKR: {startingPrice}
+              LKR: {auction.startingBid}
             </Typography>
           </Grid>
         </Grid>
@@ -89,28 +87,45 @@ const BirdCard = ({
         }}
       >
         <Grid xs={12} width={"100%"}>
-          <Button variant="contained" size="small" fullWidth>
+          <Button
+            variant="contained"
+            size="small"
+            fullWidth
+            onClick={() => navigate("/auction-preview", { state: { auction } })}
+          >
             Preview
           </Button>
         </Grid>
-        <Grid
-          direction="row"
-          sx={{ display: "flex" }}
-          justifyContent={"center"}
-          gap={3}
-          width={"100%"}
-        >
-          <Grid xs={5} textAlign="center">
-            <Button variant="contained" size="small" fullWidth>
-              Approve
-            </Button>
+        {auction.status === AUCTION_STATUS.PENDING ? (
+          <Grid
+            direction="row"
+            sx={{ display: "flex" }}
+            justifyContent={"center"}
+            gap={3}
+            width={"100%"}
+          >
+            <Grid xs={5} textAlign="center">
+              <Button
+                variant="contained"
+                size="small"
+                fullWidth
+                onClick={updateStatus}
+              >
+                Approve
+              </Button>
+            </Grid>
+            <Grid xs={5} textAlign="center">
+              <Button
+                size="small"
+                variant="outlined"
+                fullWidth
+                onClick={openModal}
+              >
+                Decline
+              </Button>
+            </Grid>
           </Grid>
-          <Grid xs={5} textAlign="center">
-            <Button size="small" variant="outlined" fullWidth>
-              Decline
-            </Button>
-          </Grid>
-        </Grid>
+        ) : null}
       </CardActions>
     </Card>
   );

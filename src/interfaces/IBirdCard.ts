@@ -1,9 +1,9 @@
+import { IUserAndAuction } from ".";
+
 interface IBirdCard {
-  image: string;
-  title: string;
-  postedBy: string;
-  loftName: string;
-  startingPrice: string;
+  auction: IUserAndAuction;
+  openModal?: () => void;
+  updateStatus?: () => void;
 }
 
 export { IBirdCard };
