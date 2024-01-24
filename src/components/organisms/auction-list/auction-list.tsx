@@ -1,15 +1,17 @@
+import { Backdrop, CircularProgress, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { AUCTION_STATUS } from "../../../enums";
+import { IUserAndAuction } from "../../../interfaces";
+import { updateAuctionStatus } from "../../../services/update-auction-status.service";
+import { sendNotification } from "../../../utils/send-notification";
 import { CardSkeleton, PageTitle } from "../../atoms";
 import { BirdCard, ConfirmationModal } from "../../molecules";
-import { IAuctionList } from "./auction-list.interface";
-import { useState } from "react";
-import { Backdrop, CircularProgress, TextField } from "@mui/material";
-import { IUserAndAuction } from "../../../interfaces";
 import { useSnackbar } from "../snackbar-provider";
-import { AUCTION_STATUS } from "../../../enums";
-import { updateAuctionStatus } from "../../../services/update-auction-status.service";
-import { useNavigate } from "react-router";
+import { IAuctionList } from "./auction-list.interface";
+
 const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
   const skeletons = Array.from({ length: 10 });
 
@@ -25,12 +27,15 @@ const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
     IUserAndAuction | undefined
   >(undefined);
 
-  const updateStatus = async (postId: string, status: AUCTION_STATUS) => {
+  const updateStatus = async (
+    auction: IUserAndAuction,
+    status: AUCTION_STATUS
+  ) => {
     const isApproved = status === AUCTION_STATUS.APPROVED;
 
     if (!isApproved && declineMessageText.length < 15) {
       snackbar?.openSnackbar(
-        "Decline message should be more than 14 characters",
+        "Rejection message should be more than 14 characters",
         "error"
       );
       return;
@@ -42,7 +47,7 @@ const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
 
     try {
       const { status: auctionStatus } = await updateAuctionStatus(
-        postId,
+        auction.id,
         status,
         declineMessageText
       );
@@ -56,6 +61,35 @@ const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
         : "Auction Rejected Successfully";
 
       snackbar?.openSnackbar(message, "success");
+
+      const approvedNotification = {
+        birdName: auction.birdName,
+        FCMToken: auction.FCMToken || "",
+        date: auction.startsAt.toDate().toLocaleDateString(),
+        time: auction.startsAt.toDate().toLocaleTimeString(),
+        notificationOwnerId: auction.userId,
+      };
+
+      const declinedNotification = {
+        birdName: auction.birdName,
+        FCMToken: auction.FCMToken || "",
+        reason: declineMessageText,
+        notificationOwnerId: auction.userId,
+      };
+
+      const notification = isApproved
+        ? approvedNotification
+        : declinedNotification;
+
+      if (auction.FCMToken) {
+        sendNotification(
+          notification,
+          isApproved
+            ? "notifications-sendAuctionApprovedNotification"
+            : "notifications-sendAuctionRejecteddNotification"
+        );
+      }
+
       navigate("/approved-auctions");
     } catch (err) {
       snackbar?.openSnackbar("Something went wrong", "error");
@@ -83,7 +117,7 @@ const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
                     },
                   })}
                   updateStatus={() =>
-                    updateStatus(auction.id, AUCTION_STATUS.APPROVED)
+                    updateStatus(auction, AUCTION_STATUS.APPROVED)
                   }
                 />
               ))}
@@ -96,19 +130,19 @@ const AuctionList = ({ auctionPost, dataLoading, title }: IAuctionList) => {
           <TextField
             autoFocus
             margin="dense"
-            label="Decline Message"
+            label="Rejection Message"
             fullWidth
             variant="standard"
             onChange={(e) => setDeclineMessageText(e.target.value)}
           />
         }
-        title="Decline Auction"
+        title="Reject Auction"
         bodyText="Please provide a reason for rejecting the auction request."
         onSubmit={() => {
           if (!pressedAuction) {
             return;
           }
-          updateStatus(pressedAuction.id, AUCTION_STATUS.REJECTED);
+          updateStatus(pressedAuction, AUCTION_STATUS.REJECTED);
         }}
       />
       <Backdrop

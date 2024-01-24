@@ -5,6 +5,7 @@ interface IUser extends IExtraUserDetails {
   uid: string;
   photoURL: string;
   posts?: string[];
+  FCMToken?: string;
 }
 
 export { IUser };
