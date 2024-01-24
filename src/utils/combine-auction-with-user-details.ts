@@ -10,6 +10,7 @@ const combineAuctionWithUserDetails = (
       ...auction,
       userName: user?.username ?? "unknown",
       loftName: user?.loftName ?? "unknown",
+      FCMToken: user?.FCMToken,
     };
     return auctionWithUser;
   });

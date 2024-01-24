@@ -26,6 +26,7 @@ import { updateAuctionStatus } from "../../../services/update-auction-status.ser
 import { ConfirmationModal } from "../../molecules";
 import { useSnackbar } from "../snackbar-provider";
 import "./style.css";
+import { sendNotification } from "../../../utils/send-notification";
 
 interface Props {
   auctionData: IUserAndAuction;
@@ -94,12 +95,15 @@ export const AuctionPreviewView: React.FC<Props> = ({ auctionData }) => {
     description: "Description",
   };
 
-  const updateStatus = async (postId: string, status: AUCTION_STATUS) => {
+  const updateStatus = async (
+    auction: IUserAndAuction,
+    status: AUCTION_STATUS
+  ) => {
     const isApproved = status === AUCTION_STATUS.APPROVED;
 
     if (!isApproved && declineMessageText.length < 15) {
       snackbar?.openSnackbar(
-        "Decline message should be more than 14 characters",
+        "Rejection message should be more than 14 characters",
         "error"
       );
       return;
@@ -111,7 +115,7 @@ export const AuctionPreviewView: React.FC<Props> = ({ auctionData }) => {
 
     try {
       const { status: auctionStatus } = await updateAuctionStatus(
-        postId,
+        auction.id,
         status,
         declineMessageText
       );
@@ -125,6 +129,34 @@ export const AuctionPreviewView: React.FC<Props> = ({ auctionData }) => {
         : "Auction Rejected Successfully";
 
       snackbar?.openSnackbar(message, "success");
+
+      const approvedNotification = {
+        birdName: auction.birdName,
+        FCMToken: auction.FCMToken || "",
+        date: auction.startsAt.toDate().toLocaleDateString(),
+        time: auction.startsAt.toDate().toLocaleTimeString(),
+        notificationOwnerId: auction.userId,
+      };
+
+      const declinedNotification = {
+        birdName: auction.birdName,
+        FCMToken: auction.FCMToken || "",
+        reason: declineMessageText,
+        notificationOwnerId: auction.userId,
+      };
+
+      const notification = isApproved
+        ? approvedNotification
+        : declinedNotification;
+
+      if (auction.FCMToken) {
+        sendNotification(
+          notification,
+          isApproved
+            ? "notifications-sendAuctionApprovedNotification"
+            : "notifications-sendAuctionRejecteddNotification"
+        );
+      }
       navigate("/approved-auctions");
     } catch (err) {
       snackbar?.openSnackbar("Something went wrong", "error");
@@ -235,7 +267,7 @@ export const AuctionPreviewView: React.FC<Props> = ({ auctionData }) => {
                     size="small"
                     fullWidth
                     onClick={() =>
-                      updateStatus(auctionData.id, AUCTION_STATUS.APPROVED)
+                      updateStatus(auctionData, AUCTION_STATUS.APPROVED)
                     }
                     disabled={isLoading}
                   >
@@ -265,15 +297,15 @@ export const AuctionPreviewView: React.FC<Props> = ({ auctionData }) => {
           <TextField
             autoFocus
             margin="dense"
-            label="Decline Message"
+            label="Rejection Message"
             fullWidth
             variant="standard"
             onChange={(e) => setDeclineMessageText(e.target.value)}
           />
         }
-        title="Decline Auction"
+        title="Reject Auction"
         bodyText="Please provide a reason for rejecting the auction request."
-        onSubmit={() => updateStatus(auctionData.id, AUCTION_STATUS.REJECTED)}
+        onSubmit={() => updateStatus(auctionData, AUCTION_STATUS.REJECTED)}
       />
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
