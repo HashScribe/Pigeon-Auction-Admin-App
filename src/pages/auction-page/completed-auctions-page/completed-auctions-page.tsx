@@ -5,13 +5,13 @@ import { useAuctionService } from "../../../services";
 const CompletedAuctionsPage = () => {
   const { auctions, loading } = useAuctionService();
 
-  const approvedAuctions = auctions?.filter(
-    (auction) => auction.status === AUCTION_STATUS.APPROVED
+  const completedAuctions = auctions?.filter(
+    (auction) => auction.status === AUCTION_STATUS.COMPLETED
   );
 
   return (
     <AuctionList
-      auctionPost={approvedAuctions}
+      auctionPost={completedAuctions}
       dataLoading={loading}
       title="Completed Auctions"
     />

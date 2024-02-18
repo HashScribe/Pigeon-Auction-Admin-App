@@ -5,13 +5,13 @@ import { useAuctionService } from "../../../services";
 const RejectedAuctionsPage = () => {
   const { auctions, loading } = useAuctionService();
 
-  const approvedAuctions = auctions?.filter(
+  const rejectedAuctions = auctions?.filter(
     (auction) => auction.status === AUCTION_STATUS.REJECTED
   );
 
   return (
     <AuctionList
-      auctionPost={approvedAuctions}
+      auctionPost={rejectedAuctions}
       dataLoading={loading}
       title="Rejected Auctions"
     />
